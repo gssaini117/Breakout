@@ -14,6 +14,7 @@ namespace gm {
         sf::Vector2f MovementDirection;
         bool moving;
         bool reset;
+        int baseSpeed;
     public:
         Ball(const sf::Vector2f& position, const sf::Vector2f& size);
         virtual void update(sf::RenderWindow& window, float deltaTime) override;
@@ -32,6 +33,7 @@ namespace gm {
         void setCurrSpeed(int speed);
 
         void bounce(int type);
+        void increaseBaseSpeed();
         void resetBall();
         void launchBall();
     };

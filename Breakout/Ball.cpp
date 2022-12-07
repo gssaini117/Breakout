@@ -8,6 +8,7 @@ Ball::Ball(const Vector2f& position, const Vector2f& size) : GameObject(position
 	body.setPosition(position);
 	body.setSize(size);
 	body.setFillColor(Color::Red);
+	baseSpeed = 180;
 	resetBall();
 }
 
@@ -77,9 +78,13 @@ void Ball::bounce(int type) {
 	}
 }
 
+void Ball::increaseBaseSpeed() {
+	baseSpeed += 20;
+}
+
 void Ball::resetBall() {
 	reset = true;
-	BallMovementSpeedPerSecond = 180;
+	BallMovementSpeedPerSecond = baseSpeed;
 	MovementDirection = Vector2f(Random::Range(-0.6f, 0.6f), -1);
 }
 
