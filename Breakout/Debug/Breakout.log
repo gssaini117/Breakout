@@ -1,0 +1,12 @@
+﻿  Ball.cpp
+C:\Users\gurki\OneDrive\Documents\GAME 230\Breakout\Breakout\Ball.cpp(85,66): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+  Game.cpp
+  GameObject.cpp
+  main.cpp
+  Paddle.cpp
+  Generating Code...
+  Breakout.vcxproj -> C:\Users\gurki\OneDrive\Documents\GAME 230\Breakout\Breakout\Debug\Breakout.exe
