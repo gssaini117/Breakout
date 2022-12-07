@@ -2,6 +2,7 @@
 #define BALL_H
 
 #include "GameObject.h"
+#include "Paddle.h"
 
 namespace gm {
 
@@ -11,7 +12,6 @@ namespace gm {
         int BallMovementSpeedPerSecond;
         sf::RectangleShape body;
         sf::Vector2f MovementDirection;
-        sf::Clock timer;
         bool moving;
         bool reset;
     public:
@@ -33,6 +33,7 @@ namespace gm {
 
         void bounce(int type);
         void resetBall();
+        void launchBall();
     };
 }
 

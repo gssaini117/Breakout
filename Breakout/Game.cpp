@@ -5,11 +5,11 @@ using namespace sf;
 
 // Implement constructor, this will effectively be a setup function as the game gets more complex
 Game::Game() :  window(VideoMode(GameWidth, GameHeight), "Game"), 
-				clock(), deltaTime(0), playerPoints(0), aiPoints(0), gameState(true),
-				paddleSound(), wallSound(), pointSound(), gameoverSound(),
-				ball(Vector2f(530, 310), Vector2f(20,20)), 
-				player(Vector2f(100, 240), Vector2f(20, 180)), 
-				ai(Vector2f(980, 240), Vector2f(20, 180)),
+				clock(), deltaTime(0), gameState(true),
+				soundManager(), uiManager(),
+				playerScore(0), playerLives(5), currLevel(1),
+				ball(Vector2f(530, 540), Vector2f(20,20)), 
+				player(Vector2f(540, 560), Vector2f(180, 20)), 
 				leftWall(Vector2f(-10, 0), Vector2f(12, 640)),
 				rightWall(Vector2f(1078, 0), Vector2f(12, 640)),
 				topWall(Vector2f(0, -10), Vector2f(1080, 12)),
@@ -19,7 +19,6 @@ Game::Game() :  window(VideoMode(GameWidth, GameHeight), "Game"),
 }
 
 void Game::run() {
-	load();
 	std::cout << "GAME BEGIN" << std::endl << std::endl;
 	while (window.isOpen())
 	{
@@ -30,20 +29,6 @@ void Game::run() {
 		update();
 		render();
 	}
-}
-
-void Game::load() {
-	paddlesfx.loadFromFile("Sounds/paddle_sfx.wav");
-	paddleSound.setBuffer(paddlesfx);
-
-	wallsfx.loadFromFile("Sounds/wall_sfx.wav");
-	wallSound.setBuffer(wallsfx);
-
-	pointsfx.loadFromFile("Sounds/point_sfx.wav");
-	pointSound.setBuffer(pointsfx);
-
-	gosfx.loadFromFile("Sounds/gameover_sfx.wav");
-	gameoverSound.setBuffer(gosfx);
 }
 
 // Implements the handle input portion of our Game Loop Programming Pattern
@@ -57,22 +42,14 @@ void Game::handleInput() {
 
 		if (gameState) {
 			// Player control
-			player.setMovementDirection(MovementDirection::None);
-			if (event.type == Event::KeyPressed) {
-				if (event.key.code == Keyboard::Up)
-					player.setMovementDirection(MovementDirection::Up);
-				else if (event.key.code == Keyboard::Down)
-					player.setMovementDirection(MovementDirection::Down);
-				else
-					player.setMovementDirection(MovementDirection::None);
-			}
-			if (player.collide(topWall.getCollider()) && player.getMovementDirection() == MovementDirection::Up) {
-				player.setMovementDirection(MovementDirection::None);
-				player.setPosition(Vector2f(100, 0));
-			}
-			if (player.collide(bottomWall.getCollider()) && player.getMovementDirection() == MovementDirection::Down) {
-				player.setMovementDirection(MovementDirection::None);
-				player.setPosition(Vector2f(100, 460));
+			player.setPosition(Vector2f(Mouse::getPosition(window).x - 90, 560));
+			if (Mouse::getPosition(window).x < 90)
+				player.setPosition(Vector2f(0, 560));
+			if (Mouse::getPosition(window).x > 990)
+				player.setPosition(Vector2f(900, 560));
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ball.launchBall();
+				soundManager.playSound(0);
 			}
 		}
 		else {
@@ -86,62 +63,33 @@ void Game::update() {
 	if (gameState) {
 		ball.update(window, deltaTime);
 		player.update(window, deltaTime);
-		ai.update(window, deltaTime);
 
 		// collision handling
 		if (ball.collide(player.getCollider())) {
 			ball.bounce(1);
-			paddleSound.play();
+			soundManager.playSound(0);
 		}
-		if (ball.collide(ai.getCollider())) {
-			ball.bounce(1);
-			paddleSound.play();
-		}
-		if (ball.collide(topWall.getCollider()) || ball.collide(bottomWall.getCollider())) {
+		if (ball.collide(topWall.getCollider())) {
 			ball.bounce(2);
-			wallSound.play();
+			soundManager.playSound(1);
 		}
-		if (ball.collide(leftWall.getCollider())) {
+		if (ball.collide(leftWall.getCollider()) || ball.collide(rightWall.getCollider())) {
+			ball.bounce(3);
+			soundManager.playSound(1);
+		}
+		if (ball.collide(bottomWall.getCollider())) {
 			ball.bounce(3);
 			ball.resetBall();
-			pointSound.play();
-			aiPoints++;
-			std::cout << "Player 1: " << playerPoints << std::endl;
-			std::cout << "Player 2: " << aiPoints << std::endl << std::endl;
-		}
-		if (ball.collide(rightWall.getCollider())) {
-			ball.bounce(3);
-			ball.resetBall();
-			pointSound.play();
-			playerPoints++;
-			std::cout << "Player 1: " << playerPoints << std::endl;
-			std::cout << "Player 2: " << aiPoints << std::endl << std::endl;
-		}
-
-		// AI Control
-		ai.setMovementDirection(MovementDirection::None);
-		if (ball.getPosition().y < ai.getPosition().y + 45) {
-			ai.setMovementDirection(MovementDirection::Up);
-		}
-		else if (ball.getPosition().y > ai.getPosition().y + 135) {
-			ai.setMovementDirection(MovementDirection::Down);
-		}
-		else
-			ai.setMovementDirection(MovementDirection::None);
-		if (ai.collide(topWall.getCollider()) && ai.getMovementDirection() == MovementDirection::Up) {
-			ai.setMovementDirection(MovementDirection::None);
-			ai.setPosition(Vector2f(980, 0));
-		}
-		if (ai.collide(bottomWall.getCollider()) && ai.getMovementDirection() == MovementDirection::Down) {
-			ai.setMovementDirection(MovementDirection::None);
-			ai.setPosition(Vector2f(980, 460));
+			soundManager.playSound(4);
+			playerLives--;
+			uiManager.setLivesText(playerLives);
 		}
 
 		// win condition
-		if (aiPoints == 7 || playerPoints == 7) {
+		if (playerLives == 0) {
 			gameState = false;
-			gameoverSound.play();
-			std::cout << "GAME OVER" << std::endl << "Press Spacebar to Quit" << std::endl;
+			soundManager.playSound(6);
+			uiManager.setGameOver();
 		}
 	}
 	else {
@@ -155,9 +103,9 @@ void Game::render() {
 
 	if (gameState) {
 		ball.render(window, deltaTime);
-		player.render(window, deltaTime);
-		ai.render(window, deltaTime);
 	}
+	player.render(window, deltaTime);
+	uiManager.render(window);
 
 	window.display();
 }

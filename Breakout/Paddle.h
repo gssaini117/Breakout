@@ -9,8 +9,8 @@ namespace gm {
 
     enum MovementDirection {
         None = 0,
-        Up = -1,
-        Down = 1
+        Left = -1,
+        Right = 1
     };
 
     class Paddle : public GameObject

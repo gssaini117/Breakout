@@ -12,6 +12,8 @@
 
 #include "Ball.h"
 #include "Paddle.h"
+#include "SoundManager.h"
+#include "UIManager.h"
 
 namespace gm {
 	const int GameWidth = 1080;
@@ -23,6 +25,13 @@ namespace gm {
 		sf::Clock clock;
 		float deltaTime;
 		bool gameState;
+
+		SoundManager soundManager;
+		UIManager uiManager;
+
+		int playerScore;
+		int playerLives;
+		int currLevel;
 		
 		Ball ball;
 		Paddle leftWall;
@@ -30,23 +39,9 @@ namespace gm {
 		Paddle topWall;
 		Paddle bottomWall;
 		Paddle player;
-		Paddle ai;
-
-		sf::SoundBuffer paddlesfx;
-		sf::SoundBuffer wallsfx;
-		sf::SoundBuffer pointsfx;
-		sf::SoundBuffer gosfx;
-		sf::Sound paddleSound;
-		sf::Sound wallSound;
-		sf::Sound pointSound;
-		sf::Sound gameoverSound;
-
-		int playerPoints;
-		int aiPoints;
 
 	public:
 		Game();
-		void load();
 		void run();
 		void handleInput();
 		void update();

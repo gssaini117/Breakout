@@ -9,7 +9,7 @@ Paddle::Paddle(const Vector2f& position, const Vector2f& size) : GameObject(posi
 }
 
 void Paddle::update(sf::RenderWindow& window, float deltaTime) {
-	move(Vector2f(0, PlayerMovementSpeedPerSecond * direction * deltaTime));
+	move(Vector2f(PlayerMovementSpeedPerSecond * direction * deltaTime, 0));
 }
 
 void Paddle::render(sf::RenderWindow& window, float deltaTime) {

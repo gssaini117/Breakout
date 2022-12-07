@@ -138,6 +138,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Paddle.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -145,6 +147,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

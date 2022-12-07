@@ -7,20 +7,20 @@ using namespace gm;
 Ball::Ball(const Vector2f& position, const Vector2f& size) : GameObject(position, size) {
 	body.setPosition(position);
 	body.setSize(size);
+	body.setFillColor(Color::Red);
 	resetBall();
 }
 
 void Ball::update(sf::RenderWindow& window, float deltaTime) {
-	if (moving) move(Vector2f(BallMovementSpeedPerSecond * MovementDirection.x * deltaTime, BallMovementSpeedPerSecond * MovementDirection.y * deltaTime));
-	else {
-		if (reset) {
-			timer.restart();
-			reset = false;
-		}
-		if (timer.getElapsedTime().asSeconds() > 2.0f) {
-			moving = true;
-		}
+	if (reset) {
+		this->setPosition(Vector2f(Mouse::getPosition(window).x-10, 540));
+		if (Mouse::getPosition(window).x < 90)
+			this->setPosition(Vector2f(80, 540));
+		if (Mouse::getPosition(window).x > 990)
+			this->setPosition(Vector2f(980, 540));
 	}
+	else 
+		move(Vector2f(BallMovementSpeedPerSecond * MovementDirection.x * deltaTime, BallMovementSpeedPerSecond * MovementDirection.y * deltaTime));
 }
 
 void Ball::render(sf::RenderWindow& window, float deltaTime) {
@@ -66,21 +66,23 @@ void Ball::bounce(int type) {
 	switch (type) {
 	case 1: // paddle collision
 		BallMovementSpeedPerSecond += 20;
-		MovementDirection = Vector2f(-MovementDirection.x, MovementDirection.y);
+		MovementDirection = Vector2f(MovementDirection.x, -MovementDirection.y);
 		break;
-	case 2: // top/bottom wall collision
+	case 2: // top wall collision
 		MovementDirection = Vector2f(MovementDirection.x, -MovementDirection.y);
 		break;
 	case 3: // left/right wall collision
-		
+		MovementDirection = Vector2f(-MovementDirection.x, MovementDirection.y);
 		break;
 	}
 }
 
 void Ball::resetBall() {
-	moving = false;
 	reset = true;
-	setPosition(Vector2f(530, 310));
 	BallMovementSpeedPerSecond = 180;
-	MovementDirection = Vector2f(-1.08, Random::Range(-0.64f, 0.64f));
+	MovementDirection = Vector2f(Random::Range(-0.6f, 0.6f), -1);
+}
+
+void Ball::launchBall() {
+	reset = false;
 }
