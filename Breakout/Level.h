@@ -18,7 +18,7 @@ namespace gm {
 		~Level();
 		void update(sf::RenderWindow& window, float deltaTime);
 		void render(sf::RenderWindow& window, float deltaTime);
-		const Brick* getBricks();
+		Brick* getBricks();
 		void levelReset();
 		int getCurrLevel();
 		bool isLevelBeaten();

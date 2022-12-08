@@ -6,7 +6,7 @@ using namespace std;
 
 Level::Level() {
 	bricks = new Brick[BRICK_COUNT];
-	currLevel = 0;
+	currLevel = 2;
 	levelReset();
 }
 
@@ -28,15 +28,37 @@ void Level::render(sf::RenderWindow& window, float deltaTime) {
 	}
 }
 
-const Brick* Level::getBricks() {
+Brick* Level::getBricks() {
 	return bricks;
 }
 
 void Level::levelReset() { // loads up level
 
 	ifstream level("level" + to_string(currLevel) + ".txt");
-	
-	// read level with a while loop
+	int brickCounter = 0;
+	Vector2f position = Vector2f(0, 90);
+	string temp = "";
+	if (level.is_open()) {
+		while (brickCounter < BRICK_COUNT) {
+			
+			level >> temp;
+
+			if (position.x >= 1080) {
+				position.x = 0;
+				position.y += 18;
+			}
+
+			if (temp == "-") {
+				position.x += 72;
+				continue;
+			}
+
+			bricks[brickCounter].GenerateBrick(position, stoi(temp));
+			position.x += 72;
+			brickCounter++;
+		}
+	}
+	level.close();
 }
 
 int Level::getCurrLevel() {

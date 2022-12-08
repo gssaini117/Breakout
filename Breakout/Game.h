@@ -14,6 +14,7 @@
 #include "Paddle.h"
 #include "SoundManager.h"
 #include "UIManager.h"
+#include "Level.h"
 
 namespace gm {
 	const int GameWidth = 1080;
@@ -28,6 +29,7 @@ namespace gm {
 
 		SoundManager soundManager;
 		UIManager uiManager;
+		Level level;
 
 		int playerScore;
 		int playerLives;

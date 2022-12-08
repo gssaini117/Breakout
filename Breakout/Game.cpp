@@ -6,7 +6,7 @@ using namespace sf;
 // Implement constructor, this will effectively be a setup function as the game gets more complex
 Game::Game() :  window(VideoMode(GameWidth, GameHeight), "Game"), 
 				clock(), deltaTime(0), gameState(true),
-				soundManager(), uiManager(),
+				soundManager(), uiManager(), level(),
 				playerScore(0), playerLives(5), currLevel(1),
 				ball(Vector2f(530, 540), Vector2f(20,20)), 
 				player(Vector2f(540, 560), Vector2f(180, 20)), 
@@ -63,6 +63,7 @@ void Game::update() {
 	if (gameState) {
 		ball.update(window, deltaTime);
 		player.update(window, deltaTime);
+		level.update(window, deltaTime);
 
 		// collision handling
 		if (ball.collide(player.getCollider())) {
@@ -84,8 +85,32 @@ void Game::update() {
 			playerLives--;
 			uiManager.setLivesText(playerLives);
 		}
+		for (int i = 0; i < 45; i++) {
+			if (ball.collide(level.getBricks()[i].getCollider())) {
+				ball.bounce(2);
+				level.getBricks()[i].hit();
+				if (level.getBricks()[i].isDead()) {
+					soundManager.playSound(3);
+					playerScore += 100;
+					uiManager.setScoreText(playerScore);
+				}
+				else {
+					soundManager.playSound(2);
+				}
+			}
+		}
+		
 
-		// win condition
+		// level handling
+		if (level.isLevelBeaten()) {
+			level.levelReset();
+			ball.increaseBaseSpeed();
+			ball.resetBall();
+			uiManager.setLevelText(level.getCurrLevel());
+			soundManager.playSound(5);
+		}
+
+		// loss condition
 		if (playerLives == 0) {
 			gameState = false;
 			soundManager.playSound(6);
@@ -101,11 +126,10 @@ void Game::update() {
 void Game::render() {
 	window.clear();
 
-	if (gameState) {
-		ball.render(window, deltaTime);
-	}
+	ball.render(window, deltaTime);
 	player.render(window, deltaTime);
 	uiManager.render(window);
+	level.render(window, deltaTime);
 
 	window.display();
 }

@@ -16,7 +16,7 @@ namespace gm {
 	{
 	protected:
 		int hp;
-		sf::RectangleShape* body;
+		sf::RectangleShape body;
 	public:
 		Brick();
 		~Brick();
