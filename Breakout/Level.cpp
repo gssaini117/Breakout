@@ -5,30 +5,32 @@ using namespace sf;
 using namespace std;
 
 Level::Level() {
-	bricks = new Brick[BRICK_COUNT];
-	currLevel = 2;
+	bricks = new Brick*[BRICK_COUNT];
+	currLevel = 0;
 	levelReset();
 }
 
 Level::~Level() {
+	for (int i = 0; i < BRICK_COUNT; i++)
+		delete bricks[i];
 	delete[] bricks;
 }
 
 void Level::update(sf::RenderWindow& window, float deltaTime) {
 	for (int i = 0; i < BRICK_COUNT; i++)
 	{
-		bricks[i].update(window, deltaTime);
+		bricks[i]->update(window, deltaTime);
 	}
 }
 
 void Level::render(sf::RenderWindow& window, float deltaTime) {
 	for (int i = 0; i < BRICK_COUNT; i++)
 	{
-		bricks[i].render(window, deltaTime);
+		bricks[i]->render(window, deltaTime);
 	}
 }
 
-Brick* Level::getBricks() {
+Brick** Level::getBricks() {
 	return bricks;
 }
 
@@ -53,7 +55,8 @@ void Level::levelReset() { // loads up level
 				continue;
 			}
 
-			bricks[brickCounter].GenerateBrick(position, stoi(temp));
+			bricks[brickCounter] = new Brick();
+			bricks[brickCounter]->GenerateBrick(position, stoi(temp));
 			position.x += 72;
 			brickCounter++;
 		}
@@ -65,9 +68,13 @@ int Level::getCurrLevel() {
 	return currLevel + 1;
 }
 
+void Level::setCurrLevel(int level) {
+	currLevel = level - 1;
+}
+
 bool Level::isLevelBeaten() {
 	for (int i = 0; i < BRICK_COUNT; i++) {
-		if (!bricks[i].isDead())
+		if (!bricks[i]->isDead())
 			return false;
 	}
 	currLevel++;

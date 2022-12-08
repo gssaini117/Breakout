@@ -35,6 +35,7 @@ namespace gm {
         void bounce(int type);
         void increaseBaseSpeed();
         void resetBall();
+        bool getResetStatus();
         void launchBall();
     };
 }

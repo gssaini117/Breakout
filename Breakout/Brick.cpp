@@ -3,7 +3,7 @@
 using namespace gm;
 using namespace sf;
 
-Brick::Brick() {
+Brick::Brick() : GameObject(Vector2f(0, 90), Vector2f(72, 18)) {
 	body.setSize(Vector2f(72, 18));
 	hp = 0;
 }
@@ -13,8 +13,8 @@ Brick::~Brick() {
 }
 
 void Brick::GenerateBrick(Vector2f position, int health) {
-	body.setPosition(position);
-	hp = health;
+	this->setPosition(position);
+	this->setHealth(health);
 }
 
 void Brick::update(sf::RenderWindow& window, float deltaTime) {

@@ -66,26 +66,34 @@ void Ball::setCurrSpeed(int speed) {
 void Ball::bounce(int type) {
 	switch (type) {
 	case 1: // paddle collision
-		BallMovementSpeedPerSecond += 20;
+		BallMovementSpeedPerSecond += 10;
 		MovementDirection = Vector2f(MovementDirection.x, -MovementDirection.y);
 		break;
 	case 2: // top wall collision
 		MovementDirection = Vector2f(MovementDirection.x, -MovementDirection.y);
+		setPosition(Vector2f(getPosition().x, 1));
 		break;
 	case 3: // left/right wall collision
 		MovementDirection = Vector2f(-MovementDirection.x, MovementDirection.y);
+		break;
+	case 4: // brick collision
+		MovementDirection = Vector2f(MovementDirection.x, -MovementDirection.y);
 		break;
 	}
 }
 
 void Ball::increaseBaseSpeed() {
-	baseSpeed += 20;
+	baseSpeed += 90;
 }
 
 void Ball::resetBall() {
 	reset = true;
 	BallMovementSpeedPerSecond = baseSpeed;
-	MovementDirection = Vector2f(Random::Range(-0.6f, 0.6f), -1);
+	MovementDirection = Vector2f(Random::Range(0.2f, 0.7f), -1);
+}
+
+bool Ball::getResetStatus() {
+	return reset;
 }
 
 void Ball::launchBall() {

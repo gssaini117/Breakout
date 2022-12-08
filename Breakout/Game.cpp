@@ -48,12 +48,22 @@ void Game::handleInput() {
 			if (Mouse::getPosition(window).x > 990)
 				player.setPosition(Vector2f(900, 560));
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				if (ball.getResetStatus())
+					soundManager.playSound(0);
 				ball.launchBall();
-				soundManager.playSound(0);
 			}
 		}
 		else {
-			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space) window.close();
+			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space) {
+				currLevel = 1;
+				level.setCurrLevel(currLevel);
+				level.levelReset();
+				ball.resetBall();
+				playerScore = 0;
+				playerLives = 5;
+				uiManager.UIReset();
+				gameState = true;
+			}
 		}
 	}
 }
@@ -86,16 +96,19 @@ void Game::update() {
 			uiManager.setLivesText(playerLives);
 		}
 		for (int i = 0; i < 45; i++) {
-			if (ball.collide(level.getBricks()[i].getCollider())) {
-				ball.bounce(2);
-				level.getBricks()[i].hit();
-				if (level.getBricks()[i].isDead()) {
-					soundManager.playSound(3);
+			Brick* b = level.getBricks()[i];
+			if (ball.collide(b->getCollider()) && !b->isDead()) {
+				ball.bounce(4);
+				b->hit();
+				if (b->isDead()) {
+					soundManager.playSound(2);
 					playerScore += 100;
 					uiManager.setScoreText(playerScore);
 				}
 				else {
-					soundManager.playSound(2);
+					soundManager.playSound(3);
+					playerScore += 20;
+					uiManager.setScoreText(playerScore);
 				}
 			}
 		}
@@ -126,10 +139,10 @@ void Game::update() {
 void Game::render() {
 	window.clear();
 
-	ball.render(window, deltaTime);
 	player.render(window, deltaTime);
 	uiManager.render(window);
 	level.render(window, deltaTime);
+	ball.render(window, deltaTime);
 
 	window.display();
 }
