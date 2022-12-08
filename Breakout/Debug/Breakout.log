@@ -1,10 +1,7 @@
-﻿  Game.cpp
-C:\Users\gurki\OneDrive\Documents\GAME 230\Breakout\Breakout\Game.cpp(45,61): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+﻿  Ball.cpp
+C:\Users\gurki\OneDrive\Documents\GAME 230\Breakout\Breakout\Ball.cpp(17,58): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-  Level.cpp
-  main.cpp
-  Generating Code...
   Breakout.vcxproj -> C:\Users\gurki\OneDrive\Documents\GAME 230\Breakout\Breakout\Debug\Breakout.exe
